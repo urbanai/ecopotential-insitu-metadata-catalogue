@@ -11,19 +11,20 @@ RUN apt-get update -y && apt-get install -y \
   libxml2-dev \ 
   libgeos-dev \
   zlib1g-dev \
+  postgresql \
+  postgresql-contrib \
   && git clone https://github.com/geopython/pycsw.git
 
 WORKDIR /pycsw
+COPY ./docker/wait_postgres.sh .
+RUN chmod 777 wait_postgres.sh
 RUN pip install --upgrade pip
 RUN pip install -e .
 RUN pip install -r requirements-standalone.txt
-RUN pip install pytest apipkg mock
+RUN pip install pytest apipkg mock psycopg2 
 
+COPY ./docker/default.cfg .
 
-COPY default.cfg .
-
-RUN pycsw-admin.py -c setup_db -f default.cfg
-
-EXPOSE 8000
-
-CMD ["python", "/pycsw/pycsw/wsgi.py"]
+COPY ./src/pycsw .
+EXPOSE 8081
+CMD ["sh", "/pycsw/wait_postgres.sh", "postgres", "python", "/pycsw/pycsw/wsgi.py", "8081"]

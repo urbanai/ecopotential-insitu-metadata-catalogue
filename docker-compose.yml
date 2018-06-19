@@ -1,0 +1,17 @@
+version: '3'
+services:
+  postgres:
+    image: "mdillon/postgis"
+    environment:
+      - POSTGRES_DB=pycsw
+      - POSTGRES_USER=pycsw
+      - POSTGRES_PASSWORD=pycsw
+  pycsw:
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile
+    links:
+      - postgres
+    ports:
+       - "8081:8081"
+    
