@@ -90,6 +90,8 @@ SYNOPSIS
 
     -b    table of the database
 
+    -l    link of a remote CSW catalogue
+
 
 EXAMPLES
 
@@ -174,17 +176,13 @@ if len(sys.argv) == 1:
     sys.exit(1)
 
 try:
-    OPTS, ARGS = getopt.getopt(sys.argv[1:], 'c:f:ho:p:ru:x:s:t:y:b:')
-    print(OPTS)
-    print(ARGS)
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], 'c:f:ho:p:ru:x:s:t:y:b:l:')
 except getopt.GetoptError as err:
     print('\nERROR: %s' % err)
     print(usage())
     sys.exit(2)
 
 for o, a in OPTS:
-    print(o)
-    print(a)
     if o == '-c':
         COMMAND = a
     if o == '-f':
@@ -211,6 +209,9 @@ for o, a in OPTS:
     
     if o == '-b':
         TABLE = a
+
+    if o == '-l':
+        SOURCE = a
 
 if COMMAND is None:
     print('-c <command> is a required argument')
