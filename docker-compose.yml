@@ -13,5 +13,5 @@ services:
     links:
       - postgres
     ports:
-       - "8081:8081"
+      - "8081:8081"
     

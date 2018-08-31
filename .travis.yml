@@ -1,12 +1,15 @@
 sudo: required
-services:
-  - docker
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.4.2
 
 before_install:
-
-  - docker build . -t starlab-pycsw
-  - docker run -d -p 8000:8000 --name starlab-pycsw starlab-pycsw
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose up .
 
 script:
- - docker exec -ti starlab-pycsw py.test -m unit
- - docker exec -ti starlab-pycsw py.test -m functional -k 'not harvesting'
+ - docker-compose exec pycsw py.test -m unit
+ - docker-compose exec pycsw py.test -m functional -k 'not harvesting'
