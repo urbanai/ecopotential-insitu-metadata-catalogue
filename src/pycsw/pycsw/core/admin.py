@@ -629,26 +629,42 @@ def harvest_source(context, source, database, table):
 	while not stop:
 		if flag:
 			startposition = src.results['nextrecord']
-		
-		src.getrecords2(esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
+
+		#src.getrecords2(esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
+		#print('results:', src.results)
+
+		xml = '''<?xml version="1.0" ?> <csw:GetRecords
+		maxRecords="100" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" resultType="results" service="CSW"
+		version="2.0.2" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd"> <csw:Query
+		typeNames="csw:Record"> <csw:ElementSetName>full</csw:ElementSetName>
+		<csw:Constraint version="1.1.0"> <ogc:Filter> <ogc:PropertyIsLike
+		escapeChar="\" singleChar="_" wildCard="%">
+		<ogc:PropertyName>csw:AnyText</ogc:PropertyName>
+		<ogc:Literal>Walter/SeaDataNet</ogc:Literal> </ogc:PropertyIsLike>
+		</ogc:Filter> </csw:Constraint> </csw:Query> </csw:GetRecords>'''
+
+		src.getrecords2(xml=xml)
+		print(src.response)
+		print('results:', src.results)
 
 		if src.results['nextrecord'] == 0 or src.results['returned'] == 0 or src.results['nextrecord'] > src.results['matches']:
 			stop = True
-		
+
 		if not stop:
-			for i in src.records:      
+			for i in src.records:
 				source_url = '{}?service=CSW&version=2.0.2&request=GetRecordById&id={}&outputschema=http://www.isotc211.org/2005/gmd'.format(source, i)
 				try:
 					exml = etree.fromstring(src.records[i].xml)
 				except Exception as err:
 					LOGGER.exception('XML document is not well-formed')
 					continue
-				
+
 				record = metadata.parse_record(context, exml, repo)
-				
+
 				for rec in record:
 					print('Inserting {} {} into database {}, table {} ....'.format(rec.typename, rec.identifier, database, table))
-					
+
 					# TODO: do this as CSW Harvest
 					try:
 						repo.insert(rec, source_url, util.get_today_and_now())
