@@ -442,7 +442,7 @@ def refresh_harvested_records(context, database, table, url):
 	repos = repository.Repository(database, context, table=table)
 
 	# get all harvested records
-	count, records = repos.query(constraint={'where': 'mdsource != "local"', 'values': []})
+	count, records = repos.query(constraint={'where': 'mdsource !=  '"'"'local '"'"'', 'values': []})
 
 	if int(count) > 0:
 		LOGGER.info('Refreshing %s harvested records', count)
@@ -629,26 +629,26 @@ def harvest_source(context, source, database, table):
 	while not stop:
 		if flag:
 			startposition = src.results['nextrecord']
-		
+
 		src.getrecords2(esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
 
 		if src.results['nextrecord'] == 0 or src.results['returned'] == 0 or src.results['nextrecord'] > src.results['matches']:
 			stop = True
-		
+
 		if not stop:
-			for i in src.records:      
+			for i in src.records:
 				source_url = '{}?service=CSW&version=2.0.2&request=GetRecordById&id={}&outputschema=http://www.isotc211.org/2005/gmd'.format(source, i)
 				try:
 					exml = etree.fromstring(src.records[i].xml)
 				except Exception as err:
 					LOGGER.exception('XML document is not well-formed')
 					continue
-				
+
 				record = metadata.parse_record(context, exml, repo)
-				
+
 				for rec in record:
 					print('Inserting {} {} into database {}, table {} ....'.format(rec.typename, rec.identifier, database, table))
-					
+
 					# TODO: do this as CSW Harvest
 					try:
 						repo.insert(rec, source_url, util.get_today_and_now())
