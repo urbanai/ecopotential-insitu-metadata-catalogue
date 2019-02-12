@@ -21,7 +21,7 @@ until psql -d pycsw -h "$host" -c '\q'; do
   sleep 5
 done
 
-psql -d pycsw -h "$host" -c "DROP TABLE IF EXISTS records;"
+#psql -d pycsw -h "$host" -c "DROP TABLE IF EXISTS records;"
 
 >&2 echo "Postgres is up - executing command: $cmd"
 pycsw-admin.py -c setup_db -f default.cfg
