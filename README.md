@@ -23,7 +23,7 @@ Install the library [PyCSW](http://pycsw.org/) and copy the content of the folde
 
 The following features have been implemented in the core of the PyCSW library. In addition, a set of shell scripts have been created to perform different tasks:
 
-- Harvest from a remote catalogue. This script can be used to create a crontab and harvest data periodically: 
+- Harvest from a remote catalogue. This script can be used to create a crontab and harvest data periodically:
 ```sh
 sh scripts/harvest_source.sh <url_of_CSW_endpoint>
 ```
@@ -53,3 +53,4 @@ Developed for the ECOPOTENTIAL project.
 
 ## Contributors:
  * [Jordi Prados](http://github.com/jordiprados)
+ * [Joana Simoes](http://github.com/doublebyte1)
