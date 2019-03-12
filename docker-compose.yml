@@ -9,9 +9,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
   pycsw:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
+    image: urbanai/ecopotential-insitu-metadata-catalogue_pycsw
     links:
       - postgres
     ports:
