@@ -27,11 +27,10 @@ The following features have been implemented in the core of the PyCSW library. I
 ```sh
 sh scripts/harvest_source.sh <url_of_CSW_endpoint>
 ```
+This is an example of a cron job to update the harvest records from deims, every day at 11pm:
 
-- Create database table
-
-```sh
-
+```
+00 23 * * *  cd $HOME/git/ecopotential-insitu-metadata-catalogue/ &&  /bin/bash -c "sh scripts/harvest_source.sh https://deims.org/pycsw/catalogue/csw
 ```
 
 ## Contributing
