@@ -1,13 +1,14 @@
 version: '3'
 services:
   postgres:
-    image: "mdillon/postgis"
+    image: "mdillon/postgis:9.6"
     environment:
       - POSTGRES_DB=pycsw
       - POSTGRES_USER=pycsw
       - POSTGRES_PASSWORD=pycsw
     volumes:
       - db-data:/var/lib/postgresql/data
+
   pycsw:
     image: urbanai/ecopotential-insitu-metadata-catalogue_pycsw
     links:

@@ -38,7 +38,10 @@ import os
 
 import six
 from shapely.wkt import loads
-from shapely.geos import ReadingError
+try:
+    from shapely.errors import ReadingError
+except:
+    from shapely.geos import ReadingError
 from sqlalchemy import create_engine, func, __version__, select
 from sqlalchemy.sql import text
 from sqlalchemy.ext.declarative import declarative_base
@@ -358,7 +361,7 @@ class Repository(object):
                                    str(rpu)),
                         }, synchronize_session='fetch')
                     # then update anytext tokens
-                    
+
                     rows2 += self._get_repo_filter(self.session.query(self.dataset)).filter(
                         text(constraint['where'])).params(self._create_values(constraint['values'])).update({
                             'anytext': func.get_anytext(getattr(
@@ -553,4 +556,3 @@ def get_spatial_overlay_rank(target_geometry, query_geometry):
             LOGGER.warning('Cannot derive spatial overlay ranking %s', err)
             return '0'
     return '0'
-
