@@ -11,7 +11,7 @@ services:
   pycsw:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./Dockerfile
     image: urbanai/ecopotential-insitu-metadata-catalogue_pycsw
     links:
       - postgres

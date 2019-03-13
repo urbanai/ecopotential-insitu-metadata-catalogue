@@ -10,7 +10,7 @@ services:
       - db-data:/var/lib/postgresql/data
 
   pycsw:
-    image: urbanai/ecopotential-insitu-metadata-catalogue_pycsw
+    image: urbanai/ecopotential-insitu-metadata-catalogue
     links:
       - postgres
     ports:

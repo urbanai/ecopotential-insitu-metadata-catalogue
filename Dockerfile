@@ -8,7 +8,7 @@ RUN apt-get update -y && apt-get install -y \
   python-dev \
   python-pip \
   libxslt-dev \
-  libxml2-dev \ 
+  libxml2-dev \
   libgeos-dev \
   zlib1g-dev \
   postgresql \
@@ -21,7 +21,7 @@ RUN chmod 777 wait_postgres.sh
 RUN pip install --upgrade pip
 RUN pip install -e .
 RUN pip install -r requirements-standalone.txt
-RUN pip install pytest apipkg mock psycopg2 
+RUN pip install pytest apipkg mock psycopg2
 
 COPY ./docker/default.cfg .
 
