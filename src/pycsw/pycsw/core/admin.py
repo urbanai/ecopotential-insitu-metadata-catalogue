@@ -622,14 +622,57 @@ def harvest_source2(context, url, xml, database, table, timeout=30):
 	from owslib.csw import CatalogueServiceWeb
 	src = CatalogueServiceWeb(url)
 
-	try:
-		with open(xml) as f:
-			src.getrecords2(xml=f.read())
-			print(src.results)
-			print(src.records)
-	except Exception as err:
-		LOGGER.exception('HTTP XML POST Harvesting error')
-		raise RuntimeError(err)
+	stop = False
+	flag = False
+	maxrecords = 10
+	force_update = True
+	repo = repository.Repository(database, context, table=table)
+	startposition = 0
+
+	while not stop:
+		if flag:
+			startposition = src.results['nextrecord']
+		try:
+			with open(xml) as f:
+				src.getrecords2(xml=f.read(),esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
+				print(src.results)
+				print(src.records)
+				if src.results['nextrecord'] == 0 or src.results['returned'] == 0 or src.results['nextrecord'] > src.results['matches']:
+					stop = True
+
+				if not stop:
+					for i in src.records:
+						source_url = '{}?service=CSW&version=2.0.2&request=GetRecordById&id={}&outputschema=http://www.isotc211.org/2005/gmd'.format(source, i)
+						try:
+							exml = etree.fromstring(src.records[i].xml)
+						except Exception as err:
+							LOGGER.exception('XML document is not well-formed')
+							continue
+
+						record = metadata.parse_record(context, exml, repo)
+
+						for rec in record:
+							print('Inserting {} {} into database {}, table {} ....'.format(rec.typename, rec.identifier, database, table))
+
+							# TODO: do this as CSW Harvest
+							try:
+								repo.insert(rec, source_url, util.get_today_and_now())
+								LOGGER.info('Inserted')
+								print("Inserted")
+							except RuntimeError as err:
+								if force_update:
+									print("Record exists. Updating")
+									LOGGER.info('Record exists. Updating.')
+									repo.update(rec)
+									LOGGER.info('Updated')
+								else:
+									print("ERROR: not inserted")
+									LOGGER.error('ERROR: not inserted %s', err)
+					flag = True
+
+		except Exception as err:
+				LOGGER.exception('HTTP XML POST Harvesting error')
+				raise RuntimeError(err)
 
 
 def harvest_source(context, source, database, table):
