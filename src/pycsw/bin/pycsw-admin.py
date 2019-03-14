@@ -34,7 +34,7 @@ from six.moves import configparser
 from six.moves import input
 import getopt
 import sys
-reload(sys)  
+reload(sys)
 sys.setdefaultencoding('utf8')
 from pycsw.core import admin, config
 
@@ -67,6 +67,7 @@ SYNOPSIS
               - create_table
               - drop_table
               - harvest_source
+              - harvest_source2
 
     -f    Filepath to pycsw configuration
 
@@ -98,7 +99,7 @@ EXAMPLES
     1.) setup_db: Creates repository tables and indexes
 
         pycsw-admin.py -c setup_db -f default.cfg
-        
+
     2.) load_records: Loads metadata records from directory or file into repository
 
         pycsw-admin.py -c load_records -p /path/to/records -f default.cfg
@@ -156,6 +157,14 @@ EXAMPLES
 
         pycsw-admin.py -c delete_records -f default.cfg -y
 
+   13.) harvest_source: Harvest a CSW source
+
+        pycsw-admin.py -c harvest_source -f default.cfg -l http://host/csw
+
+   14.) harvest_source2: Harvest a CSW source using a post request with a XML body
+
+        pycsw-admin.py -c harvest_source2 -f default.cfg -u http://host/csw -x /path/to/request.xml
+
 '''
 
 COMMAND = None
@@ -206,7 +215,7 @@ for o, a in OPTS:
         sys.exit(3)
     if o == '-y':
         FORCE_CONFIRM = True
-    
+
     if o == '-b':
         TABLE = a
 
@@ -221,7 +230,7 @@ if COMMAND not in ['setup_db', 'load_records', 'export_records',
                    'rebuild_db_indexes', 'optimize_db',
                    'refresh_harvested_records', 'gen_sitemap',
                    'post_xml', 'get_sysprof',
-                   'validate_xml', 'delete_records', 'create_table', 'drop_table', 'harvest_source']:
+                   'validate_xml', 'delete_records', 'create_table', 'drop_table', 'harvest_source', 'harvest_source2']:
     print('ERROR: invalid command name: %s' % COMMAND)
     sys.exit(5)
 
@@ -314,5 +323,8 @@ elif COMMAND == 'drop_table':
 
 elif COMMAND == 'harvest_source':
     admin.harvest_source(CONTEXT, SOURCE, DATABASE, TABLE)
+
+elif COMMAND == 'harvest_source2':
+    admin.harvest_source2(CONTEXT, CSW_URL, XML, DATABASE, TABLE, TIMEOUT)
 
 print('Done')

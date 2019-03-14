@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: urbanai/ecopotential-insitu-metadata-catalogue_pycsw
+    image: urbanai/ecopotential-insitu-metadata-catalogue:latest
     links:
       - postgres
     ports:

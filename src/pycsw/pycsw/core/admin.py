@@ -614,6 +614,22 @@ def delete_records(context, database, table):
 	repo = repository.Repository(database, context, table=table)
 	repo.delete(constraint={'where': '', 'values': []})
 
+def harvest_source2(context, url, xml, database, table, timeout=30):
+	"""Execute HTTP XML POST request and print response"""
+
+	LOGGER.info('Executing Harvesting of HTTP POST request %s on server %s', xml, url)
+
+	from owslib.csw import CatalogueServiceWeb
+	src = CatalogueServiceWeb(url)
+
+	try:
+		with open(xml) as f:
+			src.getrecords2(xml=f.read())
+			print(src.results)
+			print(src.records)
+	except Exception as err:
+		LOGGER.exception('HTTP XML POST Harvesting error')
+		raise RuntimeError(err)
 
 
 def harvest_source(context, source, database, table):
