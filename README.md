@@ -4,17 +4,28 @@
 ## Installation
 
 ### Docker
-Use the file docker-compose.yml to start the container.
-
-```py
+Clone the repository:
+```bash
 git clone https://github.com/starlab-bcn/ecopotential-insitu-metadata-catalogue
 
 cd ecopotential-insitu-metadata-catalogue
-
-sh scripts/docker-start.sh
-
 ```
-
+The default `docker-compose` file, pulls an image from the docker hub. You can start it with:
+```bash
+docker-compose up -d
+```
+, or use the convenience script `docker-run.sh`:
+```bash
+sh scripts/docker-run.sh
+```
+There is an automated build setup on [docker hub](https://hub.docker.com/r/urbanai/ecopotential-insitu-metadata-catalogue), listening to any changes on the github repository. However, if you want to build the image locally, you can use the `docker-compose-build.yml` file:
+```bash
+docker-compose up -f docker-compose-build.yml build
+```
+, or use the convenience script `docker-build.sh`:
+```bash
+sh scripts/docker-build.sh
+```
 ### Source code
 
 Install the library [PyCSW](http://pycsw.org/) and copy the content of the folder ```src``` into the PyCSW installation folder (It will overwrite some files).
