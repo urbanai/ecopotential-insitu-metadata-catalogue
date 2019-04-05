@@ -630,7 +630,11 @@ def harvest_source(context, source, database, table):
 		if flag:
 			startposition = src.results['nextrecord']
 
-		src.getrecords2(esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
+		try:
+			src.getrecords2(esn="full",startposition=startposition, maxrecords=maxrecords, outputschema='http://www.isotc211.org/2005/gmd')
+		except Exception as err:
+			LOGGER.error('Error getting records: %s', err)
+			print('Error getting records: %s', err)
 
 		if src.results['nextrecord'] == 0 or src.results['returned'] == 0 or src.results['nextrecord'] > src.results['matches']:
 			stop = True
@@ -644,7 +648,11 @@ def harvest_source(context, source, database, table):
 					LOGGER.exception('XML document is not well-formed')
 					continue
 
-				record = metadata.parse_record(context, exml, repo)
+				try:
+					record = metadata.parse_record(context, exml, repo)
+				except Exception as err:
+					LOGGER.error('Record is not well-formed: %s', err)
+					print('Record is not well-formed: %s', err)
 
 				for rec in record:
 					print('Inserting {} {} into database {}, table {} ....'.format(rec.typename, rec.identifier, database, table))

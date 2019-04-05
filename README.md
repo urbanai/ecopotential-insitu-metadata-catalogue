@@ -20,7 +20,7 @@ sh scripts/docker-run.sh
 ```
 There is an automated build setup on [docker hub](https://hub.docker.com/r/urbanai/ecopotential-insitu-metadata-catalogue), listening to any changes on the github repository. However, if you want to build the image locally, you can use the `docker-compose-build.yml` file:
 ```bash
-docker-compose up -f docker-compose-build.yml build
+docker-compose -f docker-compose-build.yml build
 ```
 , or use the convenience script `docker-build.sh`:
 ```bash
