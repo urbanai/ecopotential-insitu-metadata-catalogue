@@ -14,7 +14,7 @@ services:
     links:
       - postgres
     ports:
-      - "80:8081"
+      - "8081:8081"
 
 volumes:
   db-data:
