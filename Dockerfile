@@ -13,6 +13,7 @@ RUN apt-get update -y && apt-get install -y \
   zlib1g-dev \
   postgresql \
   postgresql-contrib \
+  libpq-dev \
   && git clone https://github.com/geopython/pycsw.git
 
 WORKDIR /pycsw
@@ -22,7 +23,6 @@ RUN pip install --upgrade pip
 RUN pip install -e .
 RUN pip install -r requirements-standalone.txt
 RUN pip install pytest apipkg mock psycopg2
-
 COPY ./docker/default.cfg .
 
 COPY ./src/pycsw .
